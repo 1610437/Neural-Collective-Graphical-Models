@@ -4,19 +4,13 @@ import torch.nn as nn
 digit=1000
 
 class NCGM(nn.Module):
-    def __init__(self, input_size, hidden_size, time_size, location_size,adj_table,z):
+    def __init__(self, input_size, hidden_size,z):
         super(NCGM, self).__init__()
 
         #Dimention of input layer
         self.input_size = input_size
         #Dimention of hidden layer
         self.hidden_size = hidden_size
-        #The number of areas
-        self.L = location_size
-        #Time steps
-        self.T = time_size
-        #Neighnours matrix
-        self.adj_table=adj_table
         #People flow parameter
         self.Z = nn.Parameter(z/digit)
         
@@ -57,38 +51,15 @@ class NCGM_objective(nn.Module):
         obj_L=0
         Z1=torch.zeros(self.L,dtype=torch.double)
         Z2=torch.zeros(self.L,dtype=torch.double)
+        
         #Sum up every elements in obj_arr under adj_table
         #Sum up every lows in Z to make transposed matrix under adj_table
-        """
-        for l in range(self.L):
-            for ll in range(self.L):
-                if self.adj_table[l,ll]==1:
-                    obj_L=obj_L+obj_arr[l,ll]
-                    Z1[l]=Z1[l]+Z[ll,l]
-                    Z2[l]=Z2[l]+Z[l,ll]
-        #print(Z1)
-        #print(obj_L)
-        """
         obj_arr=obj_arr*self.adj_table
         Z=Z*self.adj_table
-        #print(obj_arr)
-        #print(Z)
         obj_L=obj_arr.sum()
         Z1=Z.sum(axis=1)
         Z2=Z.sum(axis=0)
-        #print(obj_L)
-        #print(Z1)
-        #print(Z2)
-        """
-        #Sum up every lows in Z to make transposed matrix under adj_table
-        Z1=torch.zeros(self.L,dtype=torch.double)
-        Z2=torch.zeros(self.L,dtype=torch.double)
-        for l in range(self.L):
-            for ll in range(self.L):
-                if self.adj_table[l,ll]==1:
-                    Z1[l]=Z1[l]+Z[ll,l]
-                    Z2[l]=Z2[l]+Z[l,ll]
-        """
+
         #Limit for people from other areas
         et = self.mse_loss_t(yt/digit, Z1)
         #Limit for people to other areas

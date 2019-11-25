@@ -1,0 +1,7 @@
+tensorboard --logdir runs/ --host=172.21.83.93
+
+Git init
+Git add ./*
+Git command -m ""
+git remote add origin https://github.com/1610437/Neural-Collective-Graphical-Models.git
+git push -u origin master

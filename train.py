@@ -42,7 +42,7 @@ if __name__ == "__main__":
                 #z_tensor[l,ll,:]=torch.tensor([0.8],dtype=torch.double).pow(z_table[ll,:])*torch.tensor(population_data[l]).sum()
                 #z_tensor[l,ll,:]=z_table[ll,:]*torch.tensor(population_data[l]).sum()/adj_table[ll,:].sum()/5#weight1
                 #weight2,3傾斜なしと傾斜あり
-                z_tensor[l,ll,:]=z_table[ll,]*torch.tensor(population_data[l])[ll]*0.2
+                z_tensor[l,ll,:]=adj_table[ll,]*torch.tensor(population_data[l])[ll]*0.2
                 z_tensor[l,ll,ll]=torch.tensor(population_data[l])[ll]*adj_table[ll,ll]*0.8
                 #z_tensor[l,ll,:]=adj_table[ll,:]*model.digit#noweight
     #print(z_tensor[0,0,:])
@@ -60,11 +60,10 @@ if __name__ == "__main__":
     #torch.autograd.set_detect_anomaly(True)
 
     #Use tensorboardX
-    #writer = tensorboardX.SummaryWriter("log")
     board = tensorboardX.SummaryWriter()
 
     #Instantinate model
-    mod = model.NCGM(input_layer, hidden_layer, time_size, location_size,adj_table,z_tensor)
+    mod = model.NCGM(input_layer, hidden_layer,z_tensor)
     mod.to(device)
 
     #Instantinate objective function
@@ -115,7 +114,7 @@ if __name__ == "__main__":
     #SummaryWriterのclose[ポイント7]
     board.close()
     
-    f = open('outputcsv/z11_25.csv', 'w')
+    f = open('outputcsv/z11_25l.csv', 'w')
     writer = csv.writer(f, lineterminator='\n')
     for l in range(time_size-1):
     #for l in range(1):
@@ -123,7 +122,7 @@ if __name__ == "__main__":
             writer.writerow(mod.Z[l,ll,:].detach().numpy()*model.digit)
     f.close()
     
-    f = open('outputcsv/theta11_25.csv', 'w')
+    f = open('outputcsv/theta11_25l.csv', 'w')
     writer = csv.writer(f, lineterminator='\n')
     for l in range(location_size):
         writer.writerow(theta[l,:].detach().numpy())

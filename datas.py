@@ -45,7 +45,7 @@ def read_sample():
     return population_data, location_table, adj_table
 
 def read_chofu():
-    with open(str(Path("datas") / "m_20160917.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
+    with open(str(Path("datas") / "l_20160917.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         population_data = [[int(col) for col in row] for row in reader]
     

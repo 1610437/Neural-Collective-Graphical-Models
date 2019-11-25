@@ -1,4 +1,4 @@
-使用ライブラリ
+Used Library
 - pytorch
 - tensorboardX
 - tqdm
