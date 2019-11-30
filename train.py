@@ -39,14 +39,22 @@ if __name__ == "__main__":
     z_tensor=torch.zeros(time_size-1,location_size,location_size,dtype=torch.double)
     for l in tqdm.trange(time_size-1):
             for ll in range(location_size):
+                #for lll in range(location_size):
                 #z_tensor[l,ll,:]=torch.tensor([0.8],dtype=torch.double).pow(z_table[ll,:])*torch.tensor(population_data[l]).sum()
                 #z_tensor[l,ll,:]=z_table[ll,:]*torch.tensor(population_data[l]).sum()/adj_table[ll,:].sum()/5#weight1
                 #weight2,3傾斜なしと傾斜あり
                 z_tensor[l,ll,:]=adj_table[ll,]*torch.tensor(population_data[l])[ll]*0.2
                 z_tensor[l,ll,ll]=torch.tensor(population_data[l])[ll]*adj_table[ll,ll]*0.8
                 #z_tensor[l,ll,:]=adj_table[ll,:]*model.digit#noweight
+                    #if z_table[ll,lll]>0:
+                        #z_tensor[l,ll,lll]=(-((1/z_table[ll,lll]))).exp()*torch.tensor(population_data[l])[ll]
     #print(z_tensor[0,0,:])
-
+    f = open('outputcsv/zinit11_26.csv', 'w')
+    writer = csv.writer(f, lineterminator='\n')
+    for l in range(time_size-1):
+        for ll in range(location_size):
+           writer.writerow(z_tensor[l,ll,:].detach().numpy())
+    f.close()
     
     #Use cuda
     use_cuda = True
@@ -96,11 +104,13 @@ if __name__ == "__main__":
             optimizer.step()
 
             #itr.set_postfix(ordered_dict=OrderedDict(loss=loss.item(), b_grad=mod.fc2.bias.grad))
-            itr.set_postfix(ordered_dict=OrderedDict(loss=loss.item()))
+            #itr.set_postfix(ordered_dict=OrderedDict(loss=loss.item()))
 
             board.add_scalar("loss", loss.item(), i * (time_size - 1) + t)
             ave_loss = ave_loss + loss.item()
             
+            
+        itr.set_postfix(ordered_dict=OrderedDict(loss=ave_loss/(time_size-1),))    
         board.add_text("Z", str(mod.Z), i)
         board.add_scalar("ave_loss", ave_loss / (time_size - 1), i)
         ave_loss = 0.0
@@ -114,7 +124,7 @@ if __name__ == "__main__":
     #SummaryWriterのclose[ポイント7]
     board.close()
     
-    f = open('outputcsv/z11_25l.csv', 'w')
+    f = open('outputcsv/z11_26N11.csv', 'w')
     writer = csv.writer(f, lineterminator='\n')
     for l in range(time_size-1):
     #for l in range(1):
@@ -122,7 +132,7 @@ if __name__ == "__main__":
             writer.writerow(mod.Z[l,ll,:].detach().numpy()*model.digit)
     f.close()
     
-    f = open('outputcsv/theta11_25l.csv', 'w')
+    f = open('outputcsv/theta11_26N11.csv', 'w')
     writer = csv.writer(f, lineterminator='\n')
     for l in range(location_size):
         writer.writerow(theta[l,:].detach().numpy())

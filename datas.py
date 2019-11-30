@@ -45,19 +45,19 @@ def read_sample():
     return population_data, location_table, adj_table
 
 def read_chofu():
-    with open(str(Path("datas") / "l_20160917.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
+    with open(str(Path("datas") / "N_20160917.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         population_data = [[int(col) for col in row] for row in reader]
     
-    with open(str(Path("datas") / "adj33.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
+    with open(str(Path("datas") / "neighbour3_trans.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         adj_table = torch.tensor([[int(col) for col in row] for row in reader],dtype=torch.double)
         
-    with open(str(Path("datas") / "loc.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
+    with open(str(Path("datas") / "coordinate.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         location_table = [[int(col) for col in row] for row in reader]
         
-    with open(str(Path("datas") / "z33.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
+    with open(str(Path("datas") / "w_rev_trans.csv"), 'rt', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         z_table = torch.tensor([[float(col) for col in row] for row in reader],dtype=torch.double)
 
